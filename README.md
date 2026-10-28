@@ -1,23 +1,24 @@
 <div align="center">
 
-# 🔗 Relation Closure Engine
+# 🔗 Relation Lab
 
 ### *Relations stay abstract until you store one.*
 
-An engine that represents relations as **boolean matrices** and computes their
-**reflexive**, **symmetric** and **transitive** closures.
+An **interactive engine** that represents relations as boolean matrices, then
+analyzes, classifies and closes them: reflexive, symmetric and transitive.
 
 ![Language](https://img.shields.io/badge/language-C-00599C?style=for-the-badge&logo=c&logoColor=white)
 ![Algorithm](https://img.shields.io/badge/algorithm-Warshall-8A2BE2?style=for-the-badge)
+![Interface](https://img.shields.io/badge/interface-interactive%20menu-orange?style=for-the-badge)
 ![Course](https://img.shields.io/badge/course-CSE%20173-success?style=for-the-badge)
 ![University](https://img.shields.io/badge/NSU-North%20South%20University-0B5ED7?style=for-the-badge)
-![Status](https://img.shields.io/badge/status-complete-brightgreen?style=for-the-badge)
 
 [Overview](#-overview) •
-[The Math](#-the-math) •
+[Features](#-features) •
 [Quick Start](#-quick-start) •
-[Demo](#-live-demo-output) •
-[How It Works](#-how-it-works) •
+[Menu](#-the-menu) •
+[The Math](#-the-math) •
+[Example](#-worked-example) •
 [Team](#-team)
 
 </div>
@@ -26,35 +27,44 @@ An engine that represents relations as **boolean matrices** and computes their
 
 ## 📖 Overview
 
-A binary relation **R** on a set `{1, 2, …, n}` is just a set of ordered pairs.
-This project stores that set as an **n × n matrix of 0s and 1s**, where
+A binary relation **R** on a set `A = {1, 2, …, n}` is a set of ordered pairs.
+**Relation Lab** stores it as an **n × n matrix of 0s and 1s**, where
 `M[i][j] = 1` means *i is related to j*. Once a relation lives in a matrix,
-its closures become simple, mechanical matrix operations.
+every property and every closure becomes a clear, mechanical operation.
 
-| ✨ Feature | Description |
-|---|---|
-| 🧮 **Matrix representation** | Any relation on up to 10 elements, entered as pairs |
-| 🔍 **Property checker** | Tests reflexive, symmetric, transitive and equivalence |
-| ➕ **Three closures** | Reflexive, symmetric and transitive |
-| 🪜 **Warshall trace** | Prints the matrix after every step *k* |
-| 🎯 **Equivalence builder** | Finds the smallest equivalence relation containing R |
-| 🎬 **Demo mode** | `--demo` runs a built-in example instantly |
+This is not just a calculator. It **explains** its answers: when a property
+fails it shows the exact pair that breaks it, and when a closure grows it
+highlights every new pair.
+
+```mermaid
+flowchart LR
+    A[📥 Input<br/>pairs · matrix · preset] --> B[🧮 Relation<br/>n × n boolean matrix]
+    B --> C[🔍 Analyze<br/>6 properties + type]
+    B --> D[➕ Closures<br/>r · s · t · equivalence]
+    B --> E[🧭 Explore<br/>paths · classes · Hasse]
+    C --> F[📤 Output<br/>colored matrices · files · graph]
+    D --> F
+    E --> F
+```
 
 ---
 
-## 🧠 The Math
+## ✨ Features
 
-| Closure | Formula | Matrix operation | Complexity |
-|:---|:---:|:---|:---:|
-| **Reflexive** | R ∪ Δ | set every diagonal entry to 1 | `O(n)` |
-| **Symmetric** | R ∪ R⁻¹ | M ∨ Mᵀ | `O(n²)` |
-| **Transitive** | R ∪ R² ∪ … ∪ Rⁿ | Warshall: `m[i][j] ∨= m[i][k] ∧ m[k][j]` | `O(n³)` |
-
-> 💡 **Key idea:** the closure of a relation is the *smallest* relation that
-> contains R and has the property.
-
-> 🏆 **Bonus:** `t( s( r(R) ) )` is the smallest **equivalence relation**
-> containing R. The program computes it at the end of every run.
+| | Feature | Details |
+|---|---|---|
+| 🎛️ | **Interactive menu** | 13 options, input validation, no crashes on bad input |
+| 🔍 | **Six properties** | Reflexive, irreflexive, symmetric, antisymmetric, asymmetric, transitive |
+| 💡 | **Counter-examples** | A failed property names the pair that breaks it |
+| 🏷️ | **Classification** | Preorder, equivalence relation, partial order, strict partial order, total order |
+| ➕ | **Closures** | Reflexive, symmetric, transitive and equivalence closure |
+| 🪜 | **Warshall trace** | Matrix after every step *k*, with new pairs in **green**; optional step-by-step mode |
+| 🔄 | **Operations** | Inverse `R⁻¹`, complement, powers `Rᵏ` |
+| 🧭 | **Paths** | Shortest path between two elements and an all-pairs distance table |
+| 🧩 | **Structure tools** | Equivalence classes, Hasse diagram covering pairs, minimal and maximal elements |
+| 📦 | **Presets** | Chain, cycle, congruence mod 3, divisibility, ≤, random |
+| 💾 | **Files** | Save and load a relation; export a **Graphviz** graph |
+| 📖 | **Glossary** | Every term defined inside the program |
 
 ---
 
@@ -69,8 +79,27 @@ cd Relation-closure-engine
 gcc -Wall -Wextra -o relations main.c
 
 # 3. Run
-./relations --demo     # built-in example: 1 → 2 → 3 → 4
-./relations            # enter your own relation
+./relations
+```
+
+> 🎨 If your terminal shows odd characters instead of colors, run
+> `./relations --no-color`.
+
+**Requirements:** a C compiler (`gcc`) and a terminal. Graphviz is optional,
+only needed to turn the exported graph into an image.
+
+---
+
+## 🎛️ The Menu
+
+```text
+   1) Enter relation as pairs      8) Paths and distances
+   2) Enter relation as matrix     9) Equivalence classes
+   3) Load a preset example       10) Hasse diagram / order tools
+   4) Show current relation       11) Save / load file
+   5) Analyze properties          12) Export Graphviz graph
+   6) Closures (Warshall)         13) Glossary of terms
+   7) Inverse, complement, power   0) Exit
 ```
 
 <details>
@@ -78,23 +107,99 @@ gcc -Wall -Wextra -o relations main.c
 
 <br>
 
+**As pairs** (menu 1). Elements are numbered from 1, and `0` finishes:
+
 ```text
-Size of set n (1-10): 3
-Enter pairs 'a b' meaning a R b. Enter 0 0 to stop.
-1 2
-2 3
-0 0
+Size of the set n (1-12): 3
+pair> 1 2
+pair> 2 3
+pair> 0
 ```
 
-Elements are numbered from 1. Enter `0 0` to finish.
+**As a matrix** (menu 2). One row per line, with 0 or 1 values:
+
+```text
+row  1> 0 1 0
+row  2> 0 0 1
+row  3> 0 0 0
+```
+
+The set can have up to **12 elements**.
+
+</details>
+
+<details>
+<summary><b>📦 Built-in presets</b></summary>
+
+<br>
+
+| # | Preset | Type |
+|:-:|---|---|
+| 1 | Chain `1→2→3→4` | none, great for closures |
+| 2 | Cycle `1→2→3→1` | none, fills completely when closed |
+| 3 | Congruence `a ≡ b (mod 3)` on `{1..6}` | **equivalence relation** |
+| 4 | Divisibility `a \| b` on `{1..6}` | **partial order** |
+| 5 | Less-or-equal `a ≤ b` on `{1..5}` | **total order** |
+| 6 | Random, 5 elements | whatever you get |
 
 </details>
 
 ---
 
-## 🎬 Live Demo Output
+## 🧠 The Math
 
-Example relation: **R = { (1,2), (2,3), (3,4) }**
+### The three closures
+
+| Closure | Formula | Matrix operation | Complexity |
+|:---|:---:|:---|:---:|
+| **Reflexive** `r(R)` | R ∪ Δ | set every diagonal entry to 1 | `O(n)` |
+| **Symmetric** `s(R)` | R ∪ R⁻¹ | M ∨ Mᵀ | `O(n²)` |
+| **Transitive** `t(R)` | R ∪ R² ∪ … ∪ Rⁿ | Warshall: `m[i][j] ∨= m[i][k] ∧ m[k][j]` | `O(n³)` |
+
+> 💡 The closure of a relation is the **smallest** relation that contains R
+> and has the property.
+
+> 🏆 `t( s( r(R) ) )` is the **smallest equivalence relation** containing R
+> (menu 6, option 5).
+
+### Warshall's algorithm
+
+```c
+for (k = 0; k < n; k++)
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            m[i][j] = m[i][j] || (m[i][k] && m[k][j]);
+```
+
+After step *k*, entry `(i, j)` is 1 exactly when a path from *i* to *j* exists
+using only intermediate nodes `{1..k}`. The loop over **k must be outermost**.
+
+### Property definitions
+
+| Property | Meaning |
+|:---|:---|
+| **Reflexive** | every `(a,a)` is in R |
+| **Irreflexive** | no `(a,a)` is in R |
+| **Symmetric** | `(a,b)` in R forces `(b,a)` in R |
+| **Antisymmetric** | `(a,b)` and `(b,a)` in R only when `a = b` |
+| **Asymmetric** | `(a,b)` in R forbids `(b,a)` in R |
+| **Transitive** | `(a,b)` and `(b,c)` in R force `(a,c)` in R |
+
+### How the types are recognized
+
+| Type | Needs |
+|:---|:---|
+| **Preorder** | reflexive + transitive |
+| **Equivalence relation** | reflexive + symmetric + transitive |
+| **Partial order (poset)** | reflexive + antisymmetric + transitive |
+| **Strict partial order** | irreflexive + transitive |
+| **Total order** | partial order + every two elements comparable |
+
+---
+
+## 🎬 Worked Example
+
+**R = { (1,2), (2,3), (3,4) }**
 
 ```mermaid
 graph LR
@@ -115,8 +220,6 @@ graph LR
     n2 -.-> n4
 ```
 
-**Warshall's algorithm, step by step**
-
 | After step | Paths through … allowed | New pairs added |
 |:---:|:---:|:---|
 | k = 1 | {1} | none |
@@ -125,55 +228,71 @@ graph LR
 | k = 4 | {1, 2, 3, 4} | none |
 
 <details>
-<summary><b>🖥️ Show the matrices</b></summary>
+<summary><b>🖥️ Sample property analysis (divisibility on {1..6})</b></summary>
 
 <br>
 
 ```text
-Matrix M_R:                 Final transitive closure:
-     1  2  3  4                  1  2  3  4
-    ------------                ------------
- 1 | 0  1  0  0              1 | 0  1  1  1
- 2 | 0  0  1  0              2 | 0  0  1  1
- 3 | 0  0  0  1              3 | 0  0  0  1
- 4 | 0  0  0  0              4 | 0  0  0  0
+=== PROPERTY ANALYSIS ===
+  Reflexive      [YES]  every (a,a) is present
+  Irreflexive    [NO ]  (1,1) is present
+  Symmetric      [NO ]  (1,2) is in R but (2,1) is not
+  Antisymmetric  [YES]  no two different elements point to each other
+  Asymmetric     [NO ]  (1,1) and (1,1) are both in R
+  Transitive     [YES]  every 2-step path has a shortcut
+
+  Classification
+   * Preorder
+   * Partial order (poset)
 ```
+
+Hasse diagram covering pairs: `1<2, 1<3, 1<5, 2<4, 2<6, 3<6`
+Minimal element: `1` · Maximal elements: `4, 5, 6`
+
+</details>
+
+<details>
+<summary><b>🧩 Sample equivalence classes (congruence mod 3 on {1..6})</b></summary>
+
+<br>
+
+```text
+   [1] = { 1, 4 }
+   [2] = { 2, 5 }
+   [3] = { 3, 6 }
+  3 equivalence classes.
+```
+
+</details>
+
+<details>
+<summary><b>🧭 Sample distance table (cycle 1→2→3→1)</b></summary>
+
+<br>
+
+```text
+      1  2  3
+      ---------
+   1 | 3  1  2
+   2 | 2  3  1
+   3 | 1  2  3
+```
+
+A number *d* at `(i, j)` means that pair first appears in `R^d`.
 
 </details>
 
 ---
 
-## ⚙️ How It Works
+## 🖼️ Graphviz Export
 
-```text
-        ┌──────────┐     ┌─────────────┐     ┌───────────────┐     ┌──────────┐
-        │  Input   │ ──▶ │   Matrix    │ ──▶ │   Closure     │ ──▶ │  Output  │
-        │  pairs   │     │ Relation{n, │     │   functions   │     │ pairs +  │
-        │  (a, b)  │     │   m[][]}    │     │               │     │ matrices │
-        └──────────┘     └─────────────┘     └───────────────┘     └──────────┘
+Menu **12** writes `relation.dot`. Solid arrows are the original relation and
+**dashed red arrows** are the pairs added by the transitive closure.
+
+```bash
+sudo apt install graphviz
+dot -Tpng relation.dot -o relation.png
 ```
-
-**Warshall's algorithm**
-
-```c
-for (k = 0; k < n; k++)
-    for (i = 0; i < n; i++)
-        for (j = 0; j < n; j++)
-            m[i][j] = m[i][j] || (m[i][k] && m[k][j]);
-```
-
-> After step *k*, entry `(i, j)` is 1 exactly when a path from *i* to *j* exists
-> using only intermediate nodes `{1..k}`. The loop over **k must be outermost**.
-
-**Main functions**
-
-| Function | Purpose |
-|---|---|
-| `reflexive_closure()` | adds every `(i, i)` |
-| `symmetric_closure()` | adds `(j, i)` for every `(i, j)` |
-| `transitive_closure()` | Warshall's algorithm, with optional step trace |
-| `is_reflexive()` / `is_symmetric()` / `is_transitive()` | property tests |
-| `print_matrix()` / `print_pairs()` | display in matrix and set form |
 
 ---
 
@@ -181,20 +300,40 @@ for (k = 0; k < n; k++)
 
 ```text
 Relation-closure-engine/
-├── main.c        # the engine and demo
-├── README.md     # you are here
+├── main.c          # the whole engine and interactive menu
+├── README.md       # you are here
 ├── .gitignore
-└── docs/         # slides, report and screenshots
+├── docs/           # slides, report and screenshots
+├── relation.txt    # created by menu 11 (saved relation)
+└── relation.dot    # created by menu 12 (Graphviz graph)
 ```
+
+<details>
+<summary><b>🧱 Main functions</b></summary>
+
+<br>
+
+| Function | Purpose |
+|---|---|
+| `reflexive_closure()` / `symmetric_closure()` | build the first two closures |
+| `transitive_closure()` | Warshall's algorithm with optional trace |
+| `equivalence_closure()` | `t(s(r(R)))` |
+| `is_reflexive()` … `is_transitive()` | property tests that also return a counter-example |
+| `inverse()` / `complement()` / `compose()` | relation operations |
+| `bfs()` / `find_path()` / `distance_matrix()` | paths and distances |
+| `equivalence_classes()` / `hasse()` | structure tools |
+| `export_dot()` | Graphviz output |
+
+</details>
 
 ---
 
 ## 🔭 Future Work
 
-- [ ] Read relations from a file
-- [ ] Export graphs as images (Graphviz)
 - [ ] Support larger sets with dynamic memory
-- [ ] Compute equivalence classes and partitions
+- [ ] Combine two relations (union, intersection, composition `R ∘ S`)
+- [ ] Draw the Hasse diagram in the Graphviz export
+- [ ] Optional GUI
 
 ---
 
